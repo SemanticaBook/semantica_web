@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "source": "convaiinnovations/laya/multilingual",
+  "chunk_bytes": 25165824,
+  "variants": {
+    "q8e8": {
+      "label": "int8 weights, block-wise",
+      "onnx": "laya_q8e8.onnx",
+      "data": {
+        "name": "laya_q8e8.onnx.data",
+        "size": 338118656,
+        "sha256": "21b224e35d15fec41aab31283c0d2b683321ca95d8b5dd1841400d6facba0d34",
+        "parts": [
+          "laya_q8e8.onnx.data.part000",
+          "laya_q8e8.onnx.data.part001",
+          "laya_q8e8.onnx.data.part002",
+          "laya_q8e8.onnx.data.part003",
+          "laya_q8e8.onnx.data.part004",
+          "laya_q8e8.onnx.data.part005",
+          "laya_q8e8.onnx.data.part006",
+          "laya_q8e8.onnx.data.part007",
+          "laya_q8e8.onnx.data.part008",
+          "laya_q8e8.onnx.data.part009",
+          "laya_q8e8.onnx.data.part010",
+          "laya_q8e8.onnx.data.part011",
+          "laya_q8e8.onnx.data.part012",
+          "laya_q8e8.onnx.data.part013"
+        ],
+        "partSha256": [
+          "6a67c2949fa11939d210a551661195cdf3de1c9c19d0bba07d3edc6d9d2495f8",
+          "f715ea201d129c1e809b255b8a4842722a847f26764aa33f781cdca6fac1897e",
+          "87ccf646897ce921984ac086845d7bab48d3bbefdbcc6aa422286003a6260840",
+          "8a8d696359ac6a9595a963540f841eeb018cc84d781d237bb85b743ffc23b2d7",
+          "e684a11bf30dee68d5be36c1d2e8bcfd528efcf48b5b7d0bd387945cd7ba271a",
+          "ce4c14d6e0b032a0cabca8d8f9836dc1cb5da4ad98549acb342e2a792b5777e9",
+          "7f262f430f52e91ab9913b285e4befe066e808efecc72cd0ea5b98e77e2a0b6d",
+          "0b1319a34fb565fca885dfbc5fc68b8b16648693305d0b5d055381f72005af27",
+          "2484f38c880a18351d4342d095d67fb95d2e2a3047bf7831228086caf01ba913",
+          "0c6a5c98ca8393f74bc118e31d1c236643f54264f2fcaefbd25f4cf448c01844",
+          "e4d4c369cefeb79046d3d03b214edb107044bf59f34c06b3e53fae47ef7e378a",
+          "ff7515e6c1e67354f184fcbc521d6cd672b83affb05c964f22a3f73a4448a053",
+          "bf4ba0f185e3a7f9c7ebbe87abc10b0eb189eecf464f9df83a2c2afb611692a1",
+          "1ab7de4d4869fa9097e7b57b829f77e053f294f0fcb3da03a31e884ea440cc55"
+        ]
+      }
+    }
+  }
+}
