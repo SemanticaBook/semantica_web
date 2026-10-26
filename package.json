@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/strip-model-assets.mjs",
     "test:wasm-sequences": "tsx ../../semantica_wasm/tests/sequence-parity.mjs",
     "preview": "vite preview --host 0.0.0.0"
   },

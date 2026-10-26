@@ -89,7 +89,7 @@ function describeModelLoadError(cause: unknown) {
     return `${detail} El almacenamiento del navegador está lleno o bloqueado. Libera espacio del sitio y vuelve a intentar.`;
   }
   if (/fetch|network|download|descarga|404|failed to load/i.test(detail)) {
-    return `${detail} La web descarga el modelo ONNX ya preparado desde /models/laya-multilingual/ y lo guarda en Cache Storage. Si falta en el servidor, prepara los archivos desde el checkpoint oficial con npm run model:download dentro de semantica_wasm y vuelve a publicar la web.`;
+    return `${detail} La web descarga los archivos ONNX compatibles desde el repositorio de modelos de Semantica y los guarda en Cache Storage. Revisa que la fuente pública del modelo esté disponible y que permita solicitudes CORS.`;
   }
   if (/webgpu|wasm|simd|runtime|onnx/i.test(detail)) {
     return `${detail} Actualiza el navegador a una versión reciente de Chrome o Firefox y vuelve a cargar.`;
@@ -181,7 +181,8 @@ function App() {
     const loading = (async () => {
       try {
       const classifier = await BookcliWasmClient.load(
-        "/models/laya-multilingual/",
+        import.meta.env.VITE_LAYA_MODEL_BASE_URL ||
+          "https://huggingface.co/SemanticaBook/semantica-laya-multilingual-onnx/resolve/main/",
         (label, value) => {
           setWasmStatus(label);
           setWasmProgress(value);
@@ -409,7 +410,7 @@ function App() {
         setProgressText("Descargando e iniciando Laya en este dispositivo…");
         const loadedClassifier = await loadWasmModel();
         classifier = loadedClassifier ?? undefined;
-        if (!classifier) throw new Error(wasmError || "No se pudo cargar Laya desde /models/laya-multilingual/.");
+        if (!classifier) throw new Error(wasmError || "No se pudo cargar Laya desde la fuente configurada del modelo.");
       }
       const failures: string[] = [];
       let completed = 0;

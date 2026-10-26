@@ -19,6 +19,8 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      VITE_LAYA_MODEL_BASE_URL: ${{ vars.VITE_LAYA_MODEL_BASE_URL || format('https://huggingface.co/{0}/resolve/main/', vars.LAYA_MODEL_REPO || 'SemanticaBook/semantica-laya-multilingual-onnx') }}
 
     environment:
       name: github-pages
@@ -39,6 +41,9 @@ jobs:
 
       - name: Build Vite app
         run: npm run build
+
+      - name: Verify the public model manifest is available
+        run: curl --fail --location --silent --show-error "${VITE_LAYA_MODEL_BASE_URL%/}/manifest.json" --output /dev/null
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6

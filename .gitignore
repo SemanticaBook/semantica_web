@@ -1,4 +1,6 @@
 node_modules/
 dist/
+# Local development copy only; production model files are hosted separately.
+/public/models/laya-multilingual/
 # TypeScript build cache
 *.tsbuildinfo

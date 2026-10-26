@@ -1,0 +1,61 @@
+name: Build and publish Laya browser model
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-laya-model
+  cancel-in-progress: false
+
+jobs:
+  publish-model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_MODEL_REPO: ${{ vars.LAYA_MODEL_REPO || 'SemanticaBook/semantica-laya-multilingual-onnx' }}
+
+    steps:
+      - name: Checkout web repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Hugging Face configuration
+        run: |
+          if [[ -z "$HF_TOKEN" ]]; then
+            echo "Set the HF_TOKEN Actions secret to a Hugging Face token with write access." >&2
+            exit 1
+          fi
+          echo "Publishing model to $HF_MODEL_REPO"
+
+      - name: Prepare ONNX model from the official Laya checkpoint
+        env:
+          SEMANTICA_CACHE_DIR: ${{ runner.temp }}/semantica-cache
+        run: bash node_modules/@semantica/semantica-wasm/scripts/build-model.sh
+
+      - name: Install Hugging Face upload CLI
+        run: python -m pip install --upgrade 'huggingface_hub[cli]'
+
+      - name: Ensure the model repository is public
+        run: python -c 'import os; from huggingface_hub import HfApi; api=HfApi(); api.create_repo(repo_id=os.environ["HF_MODEL_REPO"], repo_type="model", private=False, exist_ok=True); api.update_repo_settings(repo_id=os.environ["HF_MODEL_REPO"], private=False)'
+
+      - name: Upload model artifacts
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: hf upload --repo-type model "$HF_MODEL_REPO" node_modules/@semantica/semantica-wasm/models/laya-multilingual .
