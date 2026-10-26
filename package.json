@@ -10,8 +10,8 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@semantica/semantica-wasm": "^0.1.0",
     "@huggingface/tokenizers": "^0.2.0",
+    "@semantica/semantica-wasm": "github:SemanticaBook/semantica-wasm#main",
     "@vitejs/plugin-react": "^4.3.4",
     "jszip": "^3.10.1",
     "lucide-react": "^0.468.0",
