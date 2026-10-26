@@ -938,7 +938,7 @@ function App() {
                         <div className="field-label">CLASIFICADOR LOCAL</div>
                         <p className="field-hint">
                           {useWasmClassifier
-                            ? "Laya multilingüe · inferencia WebAssembly"
+                            ? "Laya multilingüe · WebGPU preferida, CPU WASM optimizada"
                             : "Reglas rápidas · sin modelo descargable"}
                         </p>
                       </div>
