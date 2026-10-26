@@ -48,6 +48,8 @@ type QueueItem = {
   error?: string;
 };
 const SETTINGS_KEY = "semantica-inference-settings";
+const LAYA_MODEL_BACKUP_URL = "https://raw.githubusercontent.com/SemanticaBook/laya-weights/main/";
+const LAYA_MODEL_DEFAULT_URL = "https://huggingface.co/SemanticaBook/semantica-laya-multilingual-onnx/resolve/main/";
 const DEFAULT_SETTINGS: AppInferenceSettings = {
   instructions: "Clasifica SOLO el bloque entre [BLOQUE A CLASIFICAR] y su cierre. Usa el contexto anterior y posterior como referencia, no lo clasifiques. No corrijas, resumas ni inventes contenido. Clasifica el texto tal como aparece. Distingue title (título de obra), heading (capítulo/sección), subheading (subsección), paragraph (prosa), list_item (lista), caption (leyenda), noise (ruido OCR) y other (contenido válido restante). Los números de página suelen ser noise. Un índice es list_item, no heading.",
   minContextLevel: 3,
@@ -88,8 +90,8 @@ function describeModelLoadError(cause: unknown) {
   if (/quota|storage|cache|disk/i.test(detail)) {
     return `${detail} El almacenamiento del navegador está lleno o bloqueado. Libera espacio del sitio y vuelve a intentar.`;
   }
-  if (/fetch|network|download|descarga|404|failed to load/i.test(detail)) {
-    return `${detail} La web descarga los archivos ONNX compatibles desde el repositorio de modelos de Semantica y los guarda en Cache Storage. Revisa que la fuente pública del modelo esté disponible y que permita solicitudes CORS.`;
+  if (/fetch|network|download|descarga|40[134]|failed to load|modelo|CORS/i.test(detail)) {
+    return `${detail} Semantica intenta primero la fuente principal y, si falla, el respaldo versionado de GitHub. Ambos deben ser públicos y permitir solicitudes CORS; los bloques descargados se verifican y se guardan en Cache Storage.`;
   }
   if (/webgpu|wasm|simd|runtime|onnx/i.test(detail)) {
     return `${detail} Actualiza el navegador a una versión reciente de Chrome o Firefox y vuelve a cargar.`;
@@ -119,6 +121,22 @@ function readSessionJobs(): Job[] {
       : [];
   } catch {
     return [];
+  }
+}
+
+async function loadLayaClientWithBackup(
+  onProgress: (label: string, value: number) => void,
+): Promise<BookcliWasmClient> {
+  const primaryUrl = import.meta.env.VITE_LAYA_MODEL_BASE_URL || LAYA_MODEL_DEFAULT_URL;
+  try {
+    return await BookcliWasmClient.load(primaryUrl, onProgress);
+  } catch (cause) {
+    const detail = cause instanceof Error ? `${cause.name}: ${cause.message}` : String(cause);
+    const memoryFailure = /memory|allocate|out of memory|array buffer|memoria/i.test(detail);
+    const sourceUnavailable = !memoryFailure && /40[134]|failed to fetch|network|download|descarga|manifest|CORS|recurso del modelo|No se pudo cargar|no pudo descargar|HTTP 5\d\d/i.test(detail);
+    if (!sourceUnavailable || primaryUrl.replace(/\/$/, "") === LAYA_MODEL_BACKUP_URL.replace(/\/$/, "")) throw cause;
+    onProgress("No se pudo recuperar la fuente principal; descargando el respaldo versionado…", 0);
+    return BookcliWasmClient.load(LAYA_MODEL_BACKUP_URL, onProgress);
   }
 }
 
@@ -180,14 +198,10 @@ function App() {
     setWasmError("");
     const loading = (async () => {
       try {
-      const classifier = await BookcliWasmClient.load(
-        import.meta.env.VITE_LAYA_MODEL_BASE_URL ||
-          "https://huggingface.co/SemanticaBook/semantica-laya-multilingual-onnx/resolve/main/",
-        (label, value) => {
+      const classifier = await loadLayaClientWithBackup((label, value) => {
           setWasmStatus(label);
           setWasmProgress(value);
-        },
-      );
+        });
       setWasmClassifier(classifier);
       setWasmStatus("Modelo Laya listo en este dispositivo");
       return classifier;

@@ -6,7 +6,9 @@ Frontend de Semantica para convertir PDFs a EPUB y Markdown. Vite publica la apl
 
 En **Settings → Pages**, selecciona **GitHub Actions** como fuente. El workflow `Deploy Vite to GitHub Pages` construye y publica `dist/`. El modelo ONNX no forma parte de ese artefacto ni del repositorio web.
 
-La acción `Build and publish Laya browser model` es manual y prepara el modelo multilingüe oficial para ONNX Runtime Web, después lo publica en un repositorio público de Hugging Face separado. Configura el secreto de Actions `HF_TOKEN` con un token Hugging Face con acceso de escritura. Por defecto, el destino es `SemanticaBook/semantica-laya-multilingual-onnx`; puedes cambiarlo con la variable Actions `LAYA_MODEL_REPO`. Ejecuta esta acción al configurar el deploy por primera vez y cuando cambie el exportador/modelo.
+La acción `Build and publish Laya browser model` es manual y prepara el modelo multilingüe oficial para ONNX Runtime Web, después lo publica en un repositorio público de Hugging Face separado. Configura el secreto de Actions `HF_TOKEN` con un token Hugging Face con acceso de escritura. Por defecto, el destino es `SemanticaBook/semantica-laya-multilingual-onnx`; puedes cambiarlo con la variable Actions `LAYA_MODEL_REPO`. Como respaldo versionado, la web también lee desde `https://raw.githubusercontent.com/SemanticaBook/laya-weights/main/`; ese repositorio debe estar publicado y ser público.
+
+El deploy verifica que al menos una fuente sirva el manifiesto sin credenciales. Si ambas fallan, publica el respaldo de GitHub y, si corresponde, revisa el log de `Build and publish Laya browser model`. No pongas un token de Hugging Face en la configuración `VITE_*`: ese valor acabaría expuesto en el JavaScript público.
 
 Por defecto el core descarga el modelo desde:
 

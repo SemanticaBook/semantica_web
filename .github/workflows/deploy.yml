@@ -43,7 +43,25 @@ jobs:
         run: npm run build
 
       - name: Verify the public model manifest is available
-        run: curl --fail --location --silent --show-error "${VITE_LAYA_MODEL_BASE_URL%/}/manifest.json" --output /dev/null
+        shell: bash
+        run: |
+          primary="${VITE_LAYA_MODEL_BASE_URL%/}/manifest.json"
+          backup="https://raw.githubusercontent.com/SemanticaBook/laya-weights/main/manifest.json"
+          for manifest_url in "$primary" "$backup"; do
+            if status="$(curl --location --silent --show-error --output "${RUNNER_TEMP}/laya-manifest.json" --write-out '%{http_code}' "$manifest_url")"; then
+              :
+            else
+              status=000
+            fi
+            if [[ "$status" == "200" ]]; then
+              echo "Public Laya manifest is reachable: $manifest_url"
+              exit 0
+            fi
+            echo "Model source returned HTTP $status: $manifest_url" >&2
+          done
+          echo "Neither the primary model host nor the versioned laya-weights backup is publicly readable." >&2
+          echo "Publish the backup repository (and, if configured, run 'Build and publish Laya browser model'). The browser cannot use a private token." >&2
+          exit 1
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
