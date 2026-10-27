@@ -1310,8 +1310,8 @@ function App() {
             </div>
             <h1>Cómo funciona Semantica.</h1>
             <p className="intro-copy docs-intro">
-              Del PDF original a un EPUB o Markdown legible: conoce las etapas
-              que sigue Semantica y qué sucede con tus archivos.
+              Del PDF a un EPUB o Markdown legible: conoce el flujo de la web y
+              aprende a usar la librería y el CLI de Semantica.
             </p>
             <div className="docs-layout">
               <nav className="docs-nav">
@@ -1320,7 +1320,10 @@ function App() {
                 <a href="#estructura">Estructura y Laya</a>
                 <a href="#salida">EPUB, Markdown y portadas</a>
                 <a href="#privacidad">Privacidad</a>
-                <a href="#futuro">CLI y librería</a>
+                <a href="#instalacion">Instalación</a>
+                <a href="#cli">Uso desde CLI</a>
+                <a href="#codigo">Uso desde código</a>
+                <a href="#modelo-node">Modelo Laya en Node</a>
               </nav>
               <div className="docs-body">
                 <article id="flujo">
@@ -1399,14 +1402,104 @@ function App() {
                     conserva solo durante la sesión actual.
                   </p>
                 </article>
-                <article id="futuro" className="docs-future">
-                  <span className="doc-index">06 / EN PREPARACIÓN</span>
-                  <h2>CLI y librerías: próximamente</h2>
+                <article id="instalacion">
+                  <span className="doc-index">06 / INSTALACIÓN</span>
+                  <h2>Instala el paquete npm</h2>
                   <p>
-                    Estamos preparando la documentación para usar el núcleo de
-                    Semantica desde código y desde la línea de comandos. Esas
-                    guías aún no están disponibles; por ahora esta página
-                    describe el flujo y las funciones de la aplicación web.
+                    <code>semanticabook</code> ofrece la misma lógica de
+                    conversión desde una API para Node.js y desde una interfaz
+                    de terminal. Requiere Node.js 22 o posterior.
+                  </p>
+                  <pre><code>{`# Instalar en un proyecto
+npm install semanticabook
+
+# O instalar el comando para todo el sistema
+npm install --global semanticabook`}</code></pre>
+                  <p>
+                    Consulta la ficha del paquete en{" "}
+                    <a href="https://www.npmjs.com/package/semanticabook" target="_blank" rel="noreferrer">npmjs.com/package/semanticabook</a>.
+                  </p>
+                </article>
+                <article id="cli">
+                  <span className="doc-index">07 / LÍNEA DE COMANDOS</span>
+                  <h2>Convierte libros desde la terminal</h2>
+                  <p>
+                    El CLI procesa uno o varios PDFs en orden. Puedes generar
+                    ambos formatos, activar OCR para páginas escaneadas y
+                    pedir a Laya que reconstruya su jerarquía.
+                  </p>
+                  <pre><code>{`# EPUB y Markdown
+semanticabook convert libro.pdf --format both --output ./resultado
+
+# OCR y clasificación semántica para un libro escaneado
+semanticabook convert libro.pdf --ocr --laya --format both
+
+# Convertir varios archivos en una sola ejecución
+semanticabook convert ./libros/*.pdf --ocr --laya --output ./convertidos
+
+# Revisar opciones disponibles
+semanticabook convert --help`}</code></pre>
+                  <p>
+                    El formato puede ser <code>epub</code>, <code>markdown</code> o <code>both</code>.
+                    También puedes indicar metadatos con <code>--title</code>,{" "}
+                    <code>--author</code>, <code>--publisher</code>, <code>--year</code> y una portada con <code>--cover</code>.
+                  </p>
+                </article>
+                <article id="codigo">
+                  <span className="doc-index">08 / API DE NODE.JS</span>
+                  <h2>Procesa una vez y crea los dos formatos</h2>
+                  <p>
+                    <code>convert()</code> devuelve el contenido procesado para
+                    que EPUB y Markdown compartan la misma extracción y
+                    clasificación. Los métodos de salida guardan el resultado
+                    en una carpeta o en una ruta de archivo.
+                  </p>
+                  <pre><code>{`import Semantica from "semanticabook";
+
+const semantica = new Semantica({
+  useOcr: true,
+  useLaya: true,
+  inferenceSettings: {
+    minContextLevel: 3,
+    maxContextLevel: 5,
+    autoAcceptThreshold: 0.85,
+  },
+  onProgress: (percent, label) => console.log(percent, label),
+  onModelProgress: (label, percent) => console.log(percent, label),
+});
+
+const content = await semantica.convert("./libro.pdf");
+await semantica.convertPDFtoEPUB(content).save("./resultado");
+await semantica.convertPDFtoMarkdown(content).save("./resultado");`}</code></pre>
+                  <p>
+                    Puedes añadir <code>bookMetadata</code> para establecer
+                    título, autor, idioma o portada manualmente. Consulta el
+                    README del paquete para ver todas las opciones y los
+                    callbacks de revisión.
+                  </p>
+                </article>
+                <article id="modelo-node">
+                  <span className="doc-index">09 / MODELO LAYA</span>
+                  <h2>La primera ejecución descarga los pesos cuando hacen falta</h2>
+                  <p>
+                    En Node, al activar <code>useLaya</code>, la librería busca
+                    el modelo en la caché del usuario. Si no lo encuentra,
+                    descarga los pesos ONNX preparados, verifica sus hashes y
+                    continúa. Prueba la fuente primaria y luego el respaldo
+                    público de Semantica. La primera descarga necesita Internet
+                    y aproximadamente 370 MB; las siguientes ejecuciones
+                    reutilizan esos archivos.
+                  </p>
+                  <pre><code>{`# Descarga opcional antes de convertir
+semanticabook model download
+
+# Selecciona una ubicación de caché propia
+SEMANTICA_MODEL_DIR=./modelos/laya semanticabook convert libro.pdf --laya`}</code></pre>
+                  <p>
+                    La aplicación web conserva los pesos en Cache Storage del
+                    navegador; el CLI y la API de Node los guardan en la caché
+                    local del usuario. En ambos casos, la inferencia se ejecuta
+                    en el dispositivo.
                   </p>
                 </article>
               </div>

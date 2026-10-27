@@ -1389,6 +1389,18 @@ h1 {
   font-size: 11px;
   line-height: 1.75;
 }
+.docs-body p code {
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: #edf0e9;
+  color: #536963;
+  font: 0.95em "DM Mono", monospace;
+}
+.docs-body a {
+  color: #4e756c;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
 .docs-body pre {
   overflow-x: auto;
   margin: 14px 0;
@@ -1399,9 +1411,10 @@ h1 {
     10px/1.8 "DM Mono",
     monospace;
 }
-.docs-body .docs-future { margin-top: 26px; padding: 18px 20px 16px; border: 1px solid #dce6dd; border-radius: 12px; background: #f4f7f1; }
-.docs-body .docs-future h2 { font-size: 20px; }
-.docs-body .docs-future p { margin-bottom: 0; }
+.docs-body pre code {
+  color: inherit;
+  font: inherit;
+}
 .modal-backdrop {
   position: fixed;
   z-index: 9;
