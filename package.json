@@ -10,8 +10,6 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@huggingface/tokenizers": "^0.2.0",
-    "@semantica/semantica-wasm": "github:SemanticaBook/semantica-wasm#main",
     "@vitejs/plugin-react": "^4.3.4",
     "jszip": "^3.10.1",
     "lucide-react": "^0.468.0",
@@ -19,6 +17,7 @@
     "pdfjs-dist": "^4.10.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "semanticabook": "0.1.1",
     "tesseract.js": "^6.0.1"
   },
   "devDependencies": {

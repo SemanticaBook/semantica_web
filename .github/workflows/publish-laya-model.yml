@@ -47,7 +47,7 @@ jobs:
       - name: Prepare ONNX model from the official Laya checkpoint
         env:
           SEMANTICA_CACHE_DIR: ${{ runner.temp }}/semantica-cache
-        run: bash node_modules/@semantica/semantica-wasm/scripts/build-model.sh
+        run: bash node_modules/semanticabook/scripts/build-model.sh
 
       - name: Install Hugging Face upload CLI
         run: python -m pip install --upgrade 'huggingface_hub[cli]'
@@ -58,4 +58,4 @@ jobs:
       - name: Upload model artifacts
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: hf upload --repo-type model "$HF_MODEL_REPO" node_modules/@semantica/semantica-wasm/models/laya-multilingual .
+        run: hf upload --repo-type model "$HF_MODEL_REPO" node_modules/semanticabook/models/laya-multilingual .

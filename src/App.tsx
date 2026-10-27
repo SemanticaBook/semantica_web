@@ -18,14 +18,14 @@ import {
   X,
 } from "lucide-react";
 import { processPdfBatch, type OutputFormat, type RecoveredImage, type BookMetadata, type CoverAsset, type CoverSelection, type CoverSelectionRequest } from "./conversion";
-import { BookcliWasmClient } from "@semantica/semantica-wasm/client";
+import { BookcliWasmClient } from "semanticabook/client";
 import type {
   ClassificationEvent,
   BookcliLabel,
   InferenceSettings,
   ReviewQuestion,
   ReviewHandler as WasmReviewHandler,
-} from "@semantica/semantica-wasm/browser";
+} from "semanticabook/browser";
 import Reader, { type ReaderDocument, type ReaderFormat } from "./Reader";
 import { getConversionFile, saveConversionFiles } from "./session-files";
 

@@ -23,7 +23,7 @@ export default defineConfig(({ command, mode }) => ({
       // This package's browser entry uses Vite's ?url asset import for the
       // PDF.js worker. Let Vite transform that entry instead of esbuild's
       // dependency scanner, which treats the query as part of the filename.
-      "@semantica/semantica-wasm",
+      "semanticabook",
       "onnxruntime-web",
       "onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.mjs",
       "onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.wasm",

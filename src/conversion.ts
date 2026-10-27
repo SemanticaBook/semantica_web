@@ -1,1 +1,1 @@
-export * from "@semantica/semantica-wasm/browser";
+export * from "semanticabook/browser";
