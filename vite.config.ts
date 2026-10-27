@@ -7,10 +7,10 @@ import { dirname } from "node:path";
 const require = createRequire(import.meta.url);
 const ortDist = dirname(require.resolve("onnxruntime-web"));
 
-export default defineConfig(({ command, mode }) => ({
-  // Vite dev is served from the origin root. GitHub Pages publishes this
-  // project under its repository path, so only build/preview use that prefix.
-  base: command === "serve" && mode === "development" ? "/" : "/semantica_web/",
+export default defineConfig(() => ({
+  // The production site is served from the custom domain's origin root.
+  // The Pages repository path is not part of https://semantica.click/.
+  base: "/",
 
   plugins: [react()],
 
